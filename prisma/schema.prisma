@@ -1,15 +1,85 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Book {
+  id         Int    @id @default(autoincrement())
+  title      String
+  isbn       String @unique
+  authorName String
+  borrowings Borrowing[]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String?   @unique
+  role      Role
+  gender    Gender
+  password  String?   // only for admins (login)
+  phoneNo   String?
+
+  // Relation to class (only applicable if role = STUDENT)
+  classId   Int?      // foreign key, nullable because not all users have class
+  class     Class?    @relation(fields: [classId], references: [id])
+  
+  borrowings Borrowing[]
+}
+
+model Class {
+  id         Int     @id @default(autoincrement())
+  className  String
+
+  students   User[]  // one-to-many relation (one class has many students)
+}
+
+model Borrowing {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  bookId        Int
+  issuedDate    DateTime
+  dueDate       DateTime
+  renewalCount   Int       @default(0)
+  returnedDate  DateTime?
+  status         BorrowingStatus @default(ISSUED)
+
+  user          User      @relation(fields: [userId], references: [id])
+  book          Book      @relation(fields: [bookId], references: [id])
+  penalties     Penalty[]
+}
+
+model Penalty {
+  id            Int       @id @default(autoincrement())
+  borrowingId   Int
+  amount        Float
+  reason        String
+  isPaid        Boolean   @default(false)
+
+  borrowing     Borrowing @relation(fields: [borrowingId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  TEACHER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum BorrowingStatus {
+  ISSUED
+  RETURNED
+  OVERDUE
+  RENEWED
+  LOST
 }
