@@ -3,13 +3,7 @@
 import * as React from "react"
 import {
   ArrowUpCircleIcon,
-  BarChartIcon,
-  FolderIcon,
-  LayoutDashboardIcon,
-  ListIcon,
-  UsersIcon,
 } from "lucide-react"
-
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
 import {
@@ -22,39 +16,14 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 
+import { navMain } from "@/lib/sidebar-config"
+
 const data = {
   user: {
     name: "library admin",
     email: "admin@gmail.com",
     avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Records",
-      url: "/dashboard/records",
-      icon: ListIcon,
-    },
-    {
-      title: "Books",
-      url: "/dashboard/books",
-      icon: FolderIcon,
-    },
-    {
-      title: "Users",
-      url: "/dashboard/users",
-      icon: UsersIcon,
-    },
-    {
-      title: "Reports",
-      url: "/dashboard/reports",
-      icon: BarChartIcon,
-    },
-  ],
+  }
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -76,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
